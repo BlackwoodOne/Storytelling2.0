@@ -1,0 +1,82 @@
+{% extends "twoCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {{ game }}
+{% endblock %}
+
+{% block pagetitle %}Playing "{{ game }}"{% endblock %}
+
+{% block pagetitlebuttons %}
+{% endblock %}
+
+{% block firstcardtitle %}Time to Wait{% endblock %}
+{% block firstcardbody %}
+
+
+
+    {%if proceed %}
+        <script>
+
+            var x = setInterval(function() {
+
+
+                document.getElementsByName("proceed")[0].click();
+
+        }, 1000);
+        </script>
+    {% else %}
+        <script>
+        var countDown = new Date().getTime();
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = -(now-countDown);
+            var seconds = Math.floor((-distance % (1000 * 60)) / 1000);
+            document.getElementById("demo").innerHTML =  30 -seconds + "s ";
+
+
+
+
+            if (seconds > 29) {
+                clearInterval(x);
+                document.getElementById("demo").innerHTML = "EXPIRED";
+                document.getElementsByName("check")[0].click();
+            }
+        }, 1000);
+        </script>
+        <p id="demo"></p>
+    {% endif %}
+
+
+
+{% endblock %}
+
+{% block secondcardtitle %}Players{% endblock %}
+{% block secondcardbody %}
+        <p>
+     {% if game.players > 0 %}
+        <ul class="list-group">
+            {% for player in player_list %}
+                <li class="list-group-item">{{ player.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No players so far.
+    {% endif %}
+          </p>
+
+{% endblock %}
+
+{% block extrarow %}
+
+    <form action="" method="post">{% csrf_token %}
+    {%if proceed %}
+        <a   style="height:100px;width:400px" name="proceed"  class="d-inline btn btn-success" role="button" href={% url "game:play_ground" game.pk %}>Proceed</a>
+
+    {% else %}
+        <input  style="height:100px;width:400px" name="check" type="submit" name="Proceed" value="Proceed" class="flex-fill btn btn-secondary btn-lg btn-block disabled"/>
+
+    {% endif %}
+    </form>
+
+{% endblock %}

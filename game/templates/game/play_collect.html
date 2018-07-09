@@ -1,0 +1,80 @@
+{% extends "twoCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {{ game }}
+{% endblock %}
+
+{% block pagetitle %}Playing "{{ game }}"{% endblock %}
+
+{% block pagetitlebuttons %}{% endblock %}
+
+{% block firstcardtitle %}Collect Your Words{% endblock %}
+{% block firstcardbody %}
+    <form id="addWordForm" action="" method="post">{% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" value="Send" class="d-inline btn btn-primary"/>
+    </form>
+{% endblock %}
+
+{% block secondcardtitle %}Collected Words{% endblock %}
+{% block secondcardbody %}
+    {% if wordCards %}
+        <ul id="word-list" class="list-group">
+            {% for word in wordCards %}
+                <li>{{ word }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <ul id="word-list" class="list-group">
+        </ul>
+        <p>To be written!</p>
+    {% endif %}
+
+    <script type='text/javascript'>
+        window.onload = function () {
+            var wordCards = {{ wordCards|safe }};
+            var gameNumber = {{ game.game_code }};
+
+            function getSocket() {
+                return new WebSocket('ws://' + window.location.host + '/ws/collect/' + gameNumber + '/');
+            }
+
+            var chatSocket = getSocket();
+
+            chatSocket.onmessage = function (e) {
+                var data = JSON.parse(e.data);
+                var new_words = data['new_words'];
+
+                new_words.forEach(function (element) {
+                    console.log(element);
+                    if (wordCards.indexOf(element) === -1) {
+                        wordCards.push(element);
+                        document.querySelector('#word-list').insertAdjacentHTML('beforeend', '<li>' + element + '</li>');
+                    }
+                });
+
+            };
+
+            chatSocket.onclose = function (e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            setInterval(function () {
+                if (chatSocket == null || chatSocket.CLOSED == chatSocket.readyState) {
+                    console.info("Reconnected chatsocket.");
+                    chatSocket = getSocket();
+                }
+            }, 2500);
+        };
+        console.log();
+    </script>
+{% endblock %}
+
+{% block extrarow %}
+    {%if proceed  %}
+        <a style="margin-top: 10px;" class="flex-fill btn btn-success btn-lg btn-block" role="button" href={% url "game:play_wait" game.pk %}>Proceed</a>
+    {% else %}
+        <a style="margin-top: 10px;" class="flex-fill btn btn-secondary btn-lg btn-block disabled" role="button" href={% url "game:play_collect" game.pk %}>Proceed</a>
+    {% endif %}
+{% endblock %}

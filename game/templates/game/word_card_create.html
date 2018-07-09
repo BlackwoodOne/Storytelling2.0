@@ -1,0 +1,16 @@
+{% extends "game/word_card_base.html" %}
+
+{% block title %}
+    Create WordCard
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "game:word_card_list" %}>WordCard</a></h1>
+<h2>Create WordCard</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create" />
+</form>
+<a href={% url "game:word_card_list" %}>Cancel</a>
+{% endblock %}

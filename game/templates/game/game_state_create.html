@@ -1,0 +1,16 @@
+{% extends "game/game_state_base.html" %}
+
+{% block title %}
+    Create GameState
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "game:game_state_list" %}>GameState</a></h1>
+<h2>Create GameState</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create" />
+</form>
+<a href={% url "game:game_state_list" %}>Cancel</a>
+{% endblock %}

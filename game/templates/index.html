@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}Storytelling 2.0{% endblock %}
+
+{% block eyecatcher %}
+<div style="padding-top: 30px; padding-bottom: 30px;">
+    <h1 class="display-3">Welcome to Storytelling 2.0</h1>
+    <p>Dies ist ein Spiel entstanden im CSCW-Kurs der UHH zum erzählen einer Story.</p>
+    <a class="btn btn-primary btn-lg" href="/games/create/" role="button">Start a Game &raquo;</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+      <div class="card">
+          <h3 class="card-header">Last created games:</h3>
+        <div class="card-body">
+        <p>{% if latest_games_list %}
+            <ul class="list-group">
+            {% for games in latest_games_list %}
+                <a class="list-group-item list-group-item-action list-group-item-primary" href="/games/{{ games.game_code }}/">{{ games.name }} ({{ games.game_code }})</a>
+            {% endfor %}
+            </ul>
+            {% else %}
+                No games are available.
+            {% endif %}
+          </p>
+        <p><a class="btn btn-secondary btn-sm" href="games/" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <h2></h2>
+  </div>
+  <div class="col-md-4">
+    <h2></h2>
+  </div>
+</div>
+{% endblock %}
+
+
+

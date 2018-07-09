@@ -1,0 +1,45 @@
+{% extends "game/game_base.html" %}
+
+{% block title %}
+    Games
+{% endblock %}
+
+{% block eyecatcher %}
+<div class="row">
+    <div class="col">
+      <h1>Last created games</h1>
+    </div>
+    <div class="col-sm align-self-center float-right">
+         <a href={% url "game:game_create" %} class="float-right align-self-center d-inline btn btn-secondary btn-sm" role="button">Create new Game</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{% if game_list %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">ID</th>
+      <th scope="col">Players</th>
+      <th scope="col">Rounds</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for game in game_list %}
+    <tr>
+      <th scope="row"><a href={% url "game:game_detail" game.pk %}>{{ game }}</a></th>
+      <td>{{ game.game_code }}</td>
+      <td>{{ game.maxPlayers }}</td>
+      <td>{{ game.maxRounds }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+    No Games yet. <a href={% url "game:game_create" %} class="">Create a new Game now!</a>
+{% endif %}
+{% endblock %}
+

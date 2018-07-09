@@ -1,0 +1,26 @@
+{% extends "oneCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}{{ game }}{% endblock %}
+
+{% block pagetitle %}Game "{{ game }}"{% endblock %}
+
+{% block firstcardtitle %}Information{% endblock %}
+
+{% block firstcardbody %}
+    <p>Gamenumber: {{ game.game_code }}</p>
+    <p>Players: {{ game.players}}/{{game.maxPlayers }}</p>
+    <p>Max. Rounds: {{ game.maxRounds }}</p>
+    <p>Created at: {{ game.createdAt }}</p>
+{% endblock %}
+
+{% block extrarow %}
+    {% if request.session.gameID == game.game_code and request.session.playerID > 0 %}
+        <a  style="margin-top: 10px;" class="flex-fill btn btn-success btn-lg btn-block" role="button" href={% url "game:game_lobby" game.pk %}>Go to Game</a>
+    {% elif game.players == game.maxPlayers%}
+        <a  style="margin-top: 10px;" class="flex-fill btn btn-success btn-lg btn-block disabled" role="button" href={% url "game:game_lobby" game.pk %}>Game is Full</a>
+    {% else %}
+        <a  style="margin-top: 10px;" class="flex-fill btn btn-success btn-lg btn-block" role="button" href={% url "game:game_join" game.pk %}>Join the game</a>
+    {% endif %}
+
+{% endblock %}

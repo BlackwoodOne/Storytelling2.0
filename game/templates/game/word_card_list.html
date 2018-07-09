@@ -1,0 +1,20 @@
+{% extends "game/word_card_base.html" %}
+
+{% block title %}
+    WordCards
+{% endblock %}
+
+{% block content %}
+    <h1>WordCards</h1>
+    <h2><a href={% url "game:word_card_create" %}>Create new WordCard</a></h2>
+    <ul>
+    {% for word_card in word_card_list %}
+        <li><a href={% url "game:word_card_detail" word_card.pk %}>{{ word_card }}</a> | <a href={% url "game:word_card_update" word_card.pk %}>Update</a> | <form style="display:inline;" action={% url "game:word_card_delete" word_card.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ word_card }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No WordCards yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+

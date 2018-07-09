@@ -1,0 +1,126 @@
+{% extends "twoCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {{ game }}
+{% endblock %}
+
+{% block pagetitle %}Game Lobby "{{ game }}"{% endblock %}
+
+{% block pagetitlebuttons %}
+    <form class="float-right d-inline" action={% url "game:game_delete" game.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ game }}?')">{% csrf_token %}
+    <input class="float-right align-self-center d-inline btn btn-danger btn-sm" type="submit" value="Delete" /></form>
+    <a class="float-right align-self-center d-inline btn btn-secondary btn-sm" role="button" href={% url "game:game_update" game.pk %}>Update</a>
+{% endblock %}
+
+{% block info %}
+<div id='startInfo' style="visibility: hidden;" class="alert alert-info">
+    <strong>Game was started by <span id="startPlayer"></span>!</strong>  Continuing in <span id="time">3</span> ...
+</div>
+{% endblock %}
+
+{% block firstcardtitle %}Information{% endblock %}
+{% block firstcardbody %}
+    {% if request.session.playerID > 0 %}
+    <p>Your Name: {{ request.session.playerName }}</p>
+    {% endif %}
+
+    <p>Gamenumber: {{ game.game_code }}</p>
+    <p>Players: <span id="playerCount"> {{ game.players }}</span></p>
+    <p>Created at: {{ game.createdAt }}</p>
+{% endblock %}
+
+{% block secondcardtitle %}Player{% endblock %}
+{% block secondcardbody %}
+    {% if game.players > 0 %}
+        <ul id="player-list" class="list-group">
+            {% for player in player_list %}
+                <li class="list-group-item">{{ player.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No players so far.
+    {% endif %}
+    <script type='text/javascript'>
+        window.onload = function(){
+            var playerNames = {{ playerNames|safe }};
+            var gameNumber = {{ game.game_code }};
+    
+            function getSocket(){
+                return new WebSocket(
+                'ws://' + window.location.host +
+                '/ws/lobby/' + gameNumber + '/');
+            }
+
+            var chatSocket = getSocket();
+    
+            chatSocket.onmessage = function(e) {
+                var data = JSON.parse(e.data);
+                var playerName = data['playerName'];
+                var gameStarted = data['gameStarted'];
+
+                if(playerNames.indexOf(playerName) === -1){
+                    playerNames.push(playerName);
+                    document.querySelector('#player-list').insertAdjacentHTML('beforeend', '<li class="list-group-item">'+ playerName + '</li>');
+                    document.querySelector('#playerCount').innerHTML = playerNames.length;
+                }
+
+                if(gameStarted){
+                    console.log("Game started by " + playerName);
+                    document.querySelector('#startPlayer').innerHTML = playerName; 
+                    document.querySelector('#startInfo').style.visibility = 'visible';
+                    var seconds = 3;
+                    setInterval(function(){
+                        seconds--;
+                        document.querySelector('#time').innerHTML = seconds;
+                        if (seconds == 0){
+                            document.querySelector('#startGameButton').click();
+                        }
+                    },1000);                    
+                }
+
+                console.log("Received message: " + new Date().getTime() + ", "+ playerName + " joins the game.");
+            };
+
+            
+                //needs to be done after Document has loaded, otherwise #startGameButton doesnt exist 
+                document.querySelector('#startGameButton').addEventListener('click',function(){
+
+                    chatSocket.send(JSON.stringify({
+                        'message': "{{ request.session.playerName }}",
+                        'gameStarted': true
+                    }));
+                });
+                        
+            
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            chatSocket.onopen = function(){
+                chatSocket.send(JSON.stringify({
+                  'message': "{{ request.session.playerName }}"
+                }));
+                console.log("playername sent to channels");
+            }
+
+            setInterval(function(){
+                if(chatSocket == null || chatSocket.CLOSED == chatSocket.readyState ){
+                    console.info("Reconnected chatsocket.");
+                    chatSocket = getSocket();
+                }
+            }, 2500);
+        }    
+        // document.querySelector('#chat-message-input').focus();
+        // document.querySelector('#chat-message-input').onkeyup = function(e) {
+        //     if (e.keyCode === 13) {  // enter, return
+        //         document.querySelector('#chat-message-submit').click();
+        //     }
+        // };
+    </script>
+{% endblock %}
+
+{% block extrarow %}
+<a id="startGameButton" style="margin-top: 10px;"class="flex-fill btn btn-success btn-lg btn-block" role="button" href={% url "game:play_collect" game.pk %}>Start the Game</a>
+{% endblock %}
+

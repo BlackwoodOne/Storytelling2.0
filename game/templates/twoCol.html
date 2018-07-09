@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{# Load the tag library #}
+{% load bootstrap4 %}
+
+{% block eyecatcher %}
+<div class="row">
+    <div class="col">
+      <h1>{% block pagetitle %}{% endblock %}</h1>
+    </div>
+    <div class="col-sm align-self-center float-right">
+        {% block pagetitlebuttons %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% block info %} {% endblock %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <h3 class="d-inline card-header">{% block firstcardtitle %} {% endblock %}</h3>
+            <div class="card-body">
+               {% block firstcardbody %} {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <h3 class="d-inline card-header">{% block secondcardtitle %} {% endblock %}</h3>
+            <div class="card-body">
+               {% block secondcardbody %} {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+   {% block extrarow %} {% endblock %}
+</div>
+{% endblock %}

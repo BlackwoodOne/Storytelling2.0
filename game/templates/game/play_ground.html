@@ -1,0 +1,149 @@
+
+{% extends "twoColRow.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {{ game }}
+{% endblock %}
+
+{% block pagetitle %}Playing in "{{ game }}"{% endblock %}
+
+{% block pagetitlebuttons %}
+{% endblock %}
+
+{% block firstcardtitle %}The Story{% endblock %}
+{% block firstcardbody %}
+
+    <p>
+            {% for sentence in sentence_list %}
+
+                    {{sentence.content}}
+
+            {% endfor %}
+    </p>
+
+
+
+{% endblock %}
+
+{% block secondcardtitle %}Players{% endblock %}
+{% block secondcardbody %}
+        <p>
+     {% if game.players > 0 %}
+        <ul class="list-group">
+            {% for player in player_list %}
+                <li class="list-group-item">{{ player.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No players so far.
+    {% endif %}
+          </p>
+
+{% endblock %}
+
+{% block thirdcardtitle %}Pending Sentence{% endblock %}
+{% block thirdcardbody %}
+ {%if  State == "pending" %}
+    {{ sentence_list.last}}
+{% endif %}
+
+{% endblock %}
+
+
+{% block sixthcardtitle %}Your new Sentence{% endblock %}
+
+{% block sixthcardbody %}
+
+ {%if State == "play"  %}
+
+    <form action="" method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="Send" name="Sentence" class="d-inline btn btn-primary"/>
+    </form>
+
+ {% endif %}
+{% endblock %}
+
+
+{% block fifthcardtitle %}Action Panel{% endblock %}
+{% block fifthcardbody %}
+
+
+
+
+
+    {%if State == "pending"  %}
+
+        <script>
+        var countDown = new Date().getTime();
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = -(now-countDown);
+            var seconds = Math.floor((-distance % (1000 * 60)) / 1000);
+
+            document.getElementsByName("Accept")[0].value = "Accept [" + (10 -seconds) + "s]";
+
+
+
+
+            if (seconds > 9) {
+                clearInterval(x);
+                document.getElementsByName("Accept")[0].click();
+            }
+        }, 1010);
+        </script>
+
+        <form action="" method="post">{% csrf_token %}
+
+
+            <input  style="height:70px;width:180px" type="submit" id="Accept" name="Accept" value="Accept" class="d-inline btn btn-success"/>
+            <input style="height:70px;width:180px" type="submit" name="Claim" value="Claim" class="d-inline btn btn-danger"/>
+
+        </form>
+
+
+    {% else %}
+
+        <input style="height:70px;width:180px" type="submit" value="Accept" class="d-inline btn btn-lg disabled"/>
+        <input style="height:70px;width:180px" type="submit" value="Claim" class="d-inline btn btn-lg disabled"/>
+
+    {% endif %}
+
+
+
+
+{% endblock %}
+
+
+
+{% block fourthcardtitle %}Word Bank{% endblock %}
+{% block fourthcardbody %}
+    {% if wordCards %}
+        <ul class="list-group">
+        {% for word in wordCards %}
+            <li>{{ word }}</li>
+        {% endfor %}
+        </ul>
+        {% else %}
+            <p>To be written!</p>
+    {% endif %}
+{% endblock %}
+
+
+{% block extrarow %}
+ {%if State == "ready" or State == "done"  %}
+<script type="text/javascript">
+
+    window.onload = setupRefresh;
+
+    function setupRefresh() {
+      setTimeout("refreshPage();", 1000); // milliseconds
+    }
+    function refreshPage() {
+       window.location = location.href;
+    }
+  </script>
+
+  {% endif %}
+{% endblock %}

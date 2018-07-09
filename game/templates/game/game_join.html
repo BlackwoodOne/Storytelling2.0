@@ -1,0 +1,20 @@
+{% extends "oneCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}Join{% endblock %}
+
+{% block pagetitle %}Join a Game{% endblock %}
+
+{% block firstcardtitle %}Choose a Playername{% endblock %}
+
+{% block firstcardbody %}
+    <form action="" method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" {% if game.players == game.maxPlayers%} disabled {% endif %} value="{% if game.players == game.maxPlayers%} Game is Full {% else %}Enter the game{% endif %}" class="d-inline btn btn-primary"/>
+    <input onClick="location=location.href" type="button" {% if game.players == game.maxPlayers%} disabled hidden aria-hidden {% endif %} value="{% if game.players == game.maxPlayers%} Game is Full {% else %}Suggest another name.{% endif %}" class="d-inline btn btn-secondary"/>
+    </form>
+    
+{% endblock %}
+
+{% block extrarow %}
+{% endblock %}

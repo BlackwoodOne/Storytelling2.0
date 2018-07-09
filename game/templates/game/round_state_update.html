@@ -1,0 +1,19 @@
+{% extends "game/round_state_base.html" %}
+
+{% block title %}
+    Update {{ round_state }}
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "game:round_state_list" %}>RoundState</a></h1>
+<h2>Update {{ round_state }}</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+</form>
+<a href={% url "game:round_state_detail" round_state.pk %}>Cancel</a>
+<form style="display:inline;" action={% url "game:round_state_delete" round_state.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ round_state }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+</form>
+{% endblock %}

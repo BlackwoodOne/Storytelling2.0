@@ -1,0 +1,14 @@
+{% extends "game/sentence_base.html" %}
+
+{% block title %}
+    {{ sentence }}
+{% endblock %}
+
+{% block content %}
+    <h1><a href={% url "game:sentence_list" %}>Sentence</a></h1>
+    <h2>{{ sentence }} | <a href={% url "game:sentence_update" sentence.pk %}>Update</a> | 
+    <form style="display:inline;" action={% url "game:sentence_delete" sentence.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ sentence }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form>
+    </h2>
+{% endblock %}

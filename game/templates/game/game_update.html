@@ -1,0 +1,17 @@
+{% extends "oneCol.html" %}
+{% load bootstrap4 %}
+
+{% block title %}Update Game{% endblock %}
+
+{% block pagetitle %}Update Game{% endblock %}
+{% block pagetitlebuttons %}<a class="float-right align-self-center d-inline btn btn-secondary btn-sm" href={% url "game:game_list" %}>Gamelist</a>{% endblock %}
+
+{% block firstcardtitle %}Setup{% endblock %}
+
+{% block firstcardbody %}
+   <form action="" method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="Update" class="d-inline btn btn-primary"/>
+    <a href={% url "game:game_lobby" game.pk  %} class="d-inline btn btn-danger btn-sm">Cancel</a>
+</form>
+{% endblock %}
